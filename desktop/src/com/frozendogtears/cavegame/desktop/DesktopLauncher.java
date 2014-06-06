@@ -8,13 +8,11 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "CaveGame";
-//		cfg.useGL20 = false;
-//		cfg.useGL20 = true;
-//		cfg.fullscreen = true;
-		cfg.width = 1024;
-		cfg.height = 768;
-//		cfg.width = 1920;
-//		cfg.height = 1080;
+		cfg.fullscreen = true;
+//		cfg.width = 1024;
+//		cfg.height = 768;
+		cfg.width = 1920;
+		cfg.height = 1080;
 		new LwjglApplication(new CaveGame(), cfg);
 	}
 }

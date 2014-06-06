@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -42,9 +43,12 @@ public class Player extends InputAdapter {
 	float w, h;
 	PolygonShape shape;
 	Animation swimAnimation;
+	Animation runAnimation;
+	Animation idleAnimation;
+	Animation jumpAnimation;
 	AnimatedSprite animatedSprite;
 	AnimatedBox2DSprite animatedBox2dSprite;
-	Box2DSprite box2dSprite;	
+	Box2DSprite box2dSprite;
 	
 	private enum LookDirection {
 		LEFT, RIGHT, UP, DOWN,
@@ -62,7 +66,8 @@ public class Player extends InputAdapter {
 	private boolean isUnderWater;
 	private boolean canUseJetpack;
 	private boolean isUsingJetpack;
-
+	private boolean switchAnimation;
+	
 	private PointLight playerlight;
 	// private ConeLight flashlight;
 	private FlashLight flashLight;
@@ -81,6 +86,7 @@ public class Player extends InputAdapter {
 		isUnderWater = false;
 		canUseJetpack = false;
 		isUsingJetpack = false;
+		switchAnimation = false;
 		lookDirection = LookDirection.RIGHT;
 		speed = 5.5f;
 		rotationSpeed = 3f;
@@ -94,24 +100,33 @@ public class Player extends InputAdapter {
 		bodyDef.position.set(startPos);
 		body = world.createBody(bodyDef);
 
-		swimAnimation = new Animation(1 / 3f, Assets.playerSprites);
-		swimAnimation.setPlayMode(Animation.PlayMode.LOOP);
+//		swimAnimation = new Animation(1 / 3f, Assets.playerRunSprites);
+//		swimAnimation.setPlayMode(Animation.PlayMode.LOOP);
+		
+		runAnimation = new Animation(1 / 3f, Assets.playerRunTextures);
+		runAnimation.setPlayMode(Animation.PlayMode.LOOP);
+		
+		jumpAnimation = new Animation(1 / 3f, Assets.playerjumpingTextures);
+		jumpAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+		
+		idleAnimation = new Animation(1 / 3f, Assets.playerIdleTextures);
+		idleAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
 		animatedBox2dSprite = new AnimatedBox2DSprite(new AnimatedSprite(
-				swimAnimation));
+				idleAnimation));
 
 		animatedBox2dSprite.setAdjustSize(false);
 		animatedBox2dSprite.setUseOrigin(true);
 
 		animatedBox2dSprite.setScale(1f / GameConstants.PIXELS_PER_METER);
-
+		
 		w = animatedBox2dSprite.getWidth();
 		h = animatedBox2dSprite.getHeight();
 
 		animatedBox2dSprite.setOrigin(w / 2, h / 2);
 
 		FixtureDef fixDef = new FixtureDef();
-		fixDef.density = 10f;
+		fixDef.density = 7f;
 		fixDef.friction = 2f;
 
 		shape = new PolygonShape();
@@ -119,31 +134,42 @@ public class Player extends InputAdapter {
 		// ((h / 4) / GameConstants.PIXELS_PER_METER));
 		// shape.setAsBox(((w / 2) / GameConstants.PIXELS_PER_METER),
 		// ((h / 3f) / GameConstants.PIXELS_PER_METER), new Vector2(0,.58f), 0);
-		shape.setAsBox(((w / 2) / GameConstants.PIXELS_PER_METER),
+		shape.setAsBox(((w / 2.5f) / GameConstants.PIXELS_PER_METER),
 				((h / 2f) / GameConstants.PIXELS_PER_METER), new Vector2(0, 0),
 				0);
 		fixDef.shape = shape;
-		body.createFixture(fixDef);				
+		body.createFixture(fixDef);
 
-		shape.setAsBox(((w / 2) / GameConstants.PIXELS_PER_METER), (h / 6)
-				/ GameConstants.PIXELS_PER_METER, new Vector2(0, .2f), 0);
-		fixDef.density = 0;
-		// fixDef.filter.categoryBits = Globals.PLAYER_SENSOR_CATEGORY_BITS;
-		// fixDef.filter.groupIndex = Globals.PLAYER_SENSOR_GROUP_INDEX;
-		// fixDef.filter.maskBits = Globals.PLAYER_SENSOR_MASK_BITS;
-		fixDef.friction = 0;
-		fixDef.shape = shape;
-		fixDef.isSensor = true;
-		body.createFixture(fixDef).setUserData(
-				FixtureUserData.PLAYER_FOOT_SENSOR);
 
-		// CircleShape circleShape = new CircleShape();
-		// circleShape.setRadius((w / 2) / GameConstants.PIXELS_PER_METER);
-		// circleShape.setPosition(new Vector2(0,
-		// (((h / 2f)) / GameConstants.PIXELS_PER_METER)
-		// + circleShape.getRadius() * 2));
-		// fixDef.shape = circleShape;
-		// body.createFixture(fixDef);
+//		 CircleShape circleShape = new CircleShape();
+//		 circleShape.setRadius((w / 2.5f) / GameConstants.PIXELS_PER_METER);
+//		 circleShape.setPosition(new Vector2(0,
+//		 (1 / GameConstants.PIXELS_PER_METER)
+//		 + circleShape.getRadius() * 2.29f));
+//		 fixDef.shape = circleShape;
+//		 fixDef.friction = 2;
+//		 fixDef.density = 5;
+//		 body.createFixture(fixDef);
+		 
+			shape.setAsBox(((w / 2.5f) / GameConstants.PIXELS_PER_METER), (h / 6)
+					/ GameConstants.PIXELS_PER_METER, new Vector2(0, .2f), 0);
+			fixDef.density = 0;
+			fixDef.friction = 0;
+			fixDef.shape = shape;
+			fixDef.isSensor = true;
+			body.createFixture(fixDef).setUserData(
+					FixtureUserData.PLAYER_FOOT_SENSOR);
+		 
+//		 circleShape.setRadius((w / 2.5f) / GameConstants.PIXELS_PER_METER);
+//		 circleShape.setPosition(new Vector2(0,
+//		 (1 / GameConstants.PIXELS_PER_METER)
+//		 + circleShape.getRadius() * 2.4f));
+//		 fixDef.shape = circleShape;
+//		 fixDef.friction = 0;
+//		 fixDef.density = 0;
+//		 fixDef.isSensor = true;
+//		 body.createFixture(fixDef).setUserData(
+//					FixtureUserData.PLAYER_FOOT_SENSOR);
 
 		// circleShape.setRadius((w / 2) / GameConstants.PIXELS_PER_METER);
 		// circleShape.setPosition(new Vector2(0, (h * 1.5f)
@@ -173,14 +199,11 @@ public class Player extends InputAdapter {
 				lightDistance, body.getPosition().x, body.getPosition().y);
 		playerlight.attachToBody(body, Box2DUtils.width(body) / 2f,
 				Box2DUtils.height(body) / 2f);
-		// Vector2 lightPos = new Vector2(body.getPosition().x,
-		// body.getPosition().y);
+		
 		Color lightColor = new Color(0.2f, 0.5f, 0.5f, 0.55f);
-		// flashlight = new ConeLight(rayHandler, 100, lightColor, 15.0f,
-		// lightPos.x, lightPos.y, 0, 20.0f);
+
 
 		flashLight = new FlashLight(rayHandler, lightColor, body);
-//		flashLight = new FlashLight(rayHandler, lightColor, getPos());
 
 		Light.setContactFilter(Globals.PLAYER_SENSOR_CATEGORY_BITS,
 				Globals.PLAYER_SENSOR_MASK_BITS,
@@ -191,18 +214,51 @@ public class Player extends InputAdapter {
 
 	public void update(float delta, Vector2 mouseWorldPos, int waterLevel) {
 		animatedBox2dSprite.update(1 / 60f);
+		
+		if(!animatedBox2dSprite.isFlipY()){
+			animatedBox2dSprite.flipFrames(false, true, false);
+		}
 
-		if (movingLeft() && movingRight()) {
+		if (movingLeft() && movingRight()) {			
 			movement.x = 0;
 		} else {
-			if (movingLeft()) {
-				lookDirection = LookDirection.LEFT;
-				movement.x = -speed;
+			if (movingLeft()) {			
+				if(lookDirection != LookDirection.LEFT){
+					lookDirection = LookDirection.LEFT;							
+				}
+				
+				if (Globals.numOfFootContacts > 0) {
+					animatedBox2dSprite.setAnimation(runAnimation);
+				}
+				
+				if (!animatedBox2dSprite.isFlipX()) {
+					
+					animatedBox2dSprite.flipFrames(true, false, false);
+				}
+				movement.x = -speed;				
 			} else if (movingRight()) {
-				lookDirection = LookDirection.RIGHT;
-				movement.x = speed;
+				if(lookDirection != LookDirection.RIGHT){
+					lookDirection = LookDirection.RIGHT;						
+				}		
+				
+				if (Globals.numOfFootContacts > 0) {
+					animatedBox2dSprite.setAnimation(runAnimation);
+				}
+				
+				if (animatedBox2dSprite.isFlipX()) {
+					
+					animatedBox2dSprite.flipFrames(true, false, false);
+				}
+				movement.x = speed;				
 			} else {
 				movement.x = 0;
+				if(body.getLinearVelocity().x == 0){
+					animatedBox2dSprite.setAnimation(idleAnimation);
+				}
+			}
+			
+			if (Globals.numOfFootContacts < 1) {
+				animatedBox2dSprite.setAnimation(jumpAnimation);
 			}
 		}
 
@@ -273,13 +329,14 @@ public class Player extends InputAdapter {
 	}
 
 	public void jump() {
+		animatedBox2dSprite.setAnimation(jumpAnimation);
 		canUseJetpack = false;
 		body.applyLinearImpulse(0, -4f, body.getWorldCenter().x,
 				body.getWorldCenter().y, true);
 	}
-	
+
 	public void jetpackMove(float y, float deltaTime) {
-		body.applyForceToCenter(0, y, true);		
+		body.applyForceToCenter(0, y, true);
 		jetPack.update(deltaTime, body.getWorldCenter());
 		isUsingJetpack = true;
 	}
@@ -362,11 +419,11 @@ public class Player extends InputAdapter {
 	public void scale(float amount) {
 		animatedBox2dSprite.scale(amount);
 	}
-	
+
 	public void draw(SpriteBatch batch) {
-//		batch.enableBlending();
+		// batch.enableBlending();
 		animatedBox2dSprite.draw(batch, body);
-		
+
 		if (isUsingJetpack) {
 			jetPack.draw(batch);
 		}
@@ -391,22 +448,24 @@ public class Player extends InputAdapter {
 	public boolean isFlashlightEnabled() {
 		return flashlightEnabled;
 	}
+	
+	public JetPack getJetPack(){
+		return jetPack;
+	}
 
 	@Override
 	public boolean keyDown(int keycode) {
 		switch (keycode) {
 		case Keys.LEFT:
 		case Keys.A:
-			if (lookDirection == LookDirection.LEFT
-					&& !animatedBox2dSprite.isFlipX()) {
-				animatedBox2dSprite.flipFrames(true, false);
+			if (!animatedBox2dSprite.isFlipX()) {
+				animatedBox2dSprite.flipFrames(true, false, false);
 			}
 			break;
 		case Keys.RIGHT:
 		case Keys.D:
-			if (lookDirection == LookDirection.RIGHT
-					&& animatedBox2dSprite.isFlipX()) {
-				animatedBox2dSprite.flipFrames(true, false);
+			if (animatedBox2dSprite.isFlipX()) {				
+				animatedBox2dSprite.flipFrames(true, false, false);
 			}
 			break;
 		case Keys.R:
@@ -452,15 +511,12 @@ public class Player extends InputAdapter {
 			stop();
 			break;
 		case Keys.UP:
-			// stop();
 			break;
 		case Keys.DOWN:
-			// stop();
 			break;
 		case Keys.SPACE:
 			if (Globals.numOfFootContacts < 1)
 				jetPack.reset();
-			// canUseJetpack = true;
 			break;
 		case Keys.R:
 			body.setAngularVelocity(0);

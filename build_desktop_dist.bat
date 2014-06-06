@@ -1,0 +1,3 @@
+@echo off
+echo Building desktop dist...
+gradlew.bat desktop:dist

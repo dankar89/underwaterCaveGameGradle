@@ -10,14 +10,39 @@ import com.frozendogtears.common.Assets;
 public class JetPack {
 	private ParticleEffect jetpackEffect;
 	private Body body;
+	private float maxFuelTime; // seconds
+	private float jetPackRestTime; // seconds
+	// public float NO_BATTERY_FLICKER_TIME = 1; // seconds
+	private float rechargeMultiplier;
+	private float activeTime;
+	private float restTimer;
+	private boolean hasFuel;
 
-	public JetPack() {
-		jetpackEffect = Assets.jetpackEffect;
-		jetpackEffect.start();
+	public boolean hasFuel() {
+		return hasFuel;
+	}
+
+	public float getFuelTime() {
+		return maxFuelTime;
+	}
+
+	public float getRestTimer() {
+		return restTimer;
+	}
+	
+	public boolean isActive(){
+		return activeTime > 0;
 	}
 	
 	public JetPack(World world, Body body) {
 		jetpackEffect = Assets.jetpackEffect;
+		maxFuelTime = 40;
+		jetPackRestTime = 3;
+		rechargeMultiplier = 1.8f;
+		activeTime = 0;
+		restTimer = jetPackRestTime;
+		hasFuel = true;
+
 		attachToBody(body);
 		jetpackEffect.start();
 	}
@@ -32,7 +57,8 @@ public class JetPack {
 	}
 
 	public void update(float deltaTime, Vector2 pos) {
-		jetpackEffect.setPosition(body.getWorldCenter().x, body.getWorldCenter().y);
+		jetpackEffect.setPosition(body.getWorldCenter().x,
+				body.getWorldCenter().y);
 		jetpackEffect.update(deltaTime);
 	}
 

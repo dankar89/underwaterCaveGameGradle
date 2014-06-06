@@ -53,7 +53,7 @@ public class RemotePlayer {
 		bodyDef.position.set(startPos);
 		body = world.createBody(bodyDef);
 
-		box2dSprite = new Box2DSprite(Assets.playerSprites.first());
+		box2dSprite = new Box2DSprite(Assets.playerRunTextures.first());
 		box2dSprite.setAdjustSize(false);
 		box2dSprite.setUseOrigin(true);
 		box2dSprite.setScale(1f / GameConstants.PIXELS_PER_METER);

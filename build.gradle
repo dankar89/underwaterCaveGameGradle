@@ -63,7 +63,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-        compile "com.badlogicgames.box2dlights:box2dlights:1.2"
+        //compile "com.badlogicgames.box2dlights:box2dlights:1.2"
     }
 }
 
@@ -98,7 +98,7 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
-        compile "com.badlogicgames.box2dlights:box2dlights:1.2:sources"
+        //compile "com.badlogicgames.box2dlights:box2dlights:1.2:sources"
     }
 }
 
@@ -110,7 +110,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.badlogicgames.box2dlights:box2dlights:1.2"  
+        //compile "com.badlogicgames.box2dlights:box2dlights:1.2"  
         compile fileTree(dir: 'libs', include: '*.jar') 
     }
 }

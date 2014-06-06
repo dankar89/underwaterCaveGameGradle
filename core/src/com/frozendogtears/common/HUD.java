@@ -42,6 +42,7 @@ public class HUD {
 	private float miniMapOffsetY = 0;
 
 	private int flashLightIconIndex = 0;
+	private int fuelIconIndex = 0;
 
 	public Touchpad getTouchpad() {
 		return touchpad;
@@ -220,7 +221,9 @@ public class HUD {
 					.floorPositive(((player.getFlashLight().getActiveTime() / player
 							.getFlashLight().BATTERY_LIFE) * (Assets.flashLight.size -1)));
 			
-//			flashLightIconIndex = MathUtils.clamp(flashLightIconIndex, 0, Assets.flashLight.size);
+//			fuelIconIndex = MathUtils
+//					.floorPositive(((player.getJetPack().getActiveTime() / player
+//							.getFlashLight().BATTERY_LIFE) * (Assets.flashLight.size -1)));
 		}
 	}
 

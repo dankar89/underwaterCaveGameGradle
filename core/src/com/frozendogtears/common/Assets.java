@@ -46,8 +46,10 @@ public class Assets {
 	public static ObjectMap<String, TileShapeData> shapeDataMap = new ObjectMap<String, TileShapeData>();
 
 	// player sprite regions
-	public static Array<AtlasRegion> diverSprites = new Array<AtlasRegion>();
-	public static Array<AtlasRegion> playerSprites = new Array<AtlasRegion>();
+	public static Array<AtlasRegion> diverTextures = new Array<AtlasRegion>();
+	public static Array<AtlasRegion> playerRunTextures = new Array<AtlasRegion>();
+	public static Array<AtlasRegion> playerIdleTextures = new Array<AtlasRegion>();
+	public static Array<AtlasRegion> playerjumpingTextures = new Array<AtlasRegion>();
 
 	public static TextureAtlas tilesAtlas;
 	public static TextureAtlas spriteAtlas;
@@ -104,7 +106,7 @@ public class Assets {
 		
 		assetManager
 				.load("textures/diver/test/diver64.txt", TextureAtlas.class);
-		assetManager.load("textures/player/player64.txt", TextureAtlas.class);
+		assetManager.load("textures/player/player32.txt", TextureAtlas.class);
 
 		assetManager.load("data/whitesquare.png", Texture.class);
 
@@ -130,7 +132,7 @@ public class Assets {
 		mapTextureAtlas = assetManager.get("hud/map/map.txt");
 		hudTextureAtlas = assetManager.get("hud/hud.txt");
 		spriteAtlas = assetManager.get("textures/diver/test/diver64.txt");
-		playerSpriteAtlas = assetManager.get("textures/player/player64.txt");
+		playerSpriteAtlas = assetManager.get("textures/player/player32.txt");
 
 		// tilemap textures
 		cornerTiles = tilesAtlas.findRegions("corner");
@@ -153,8 +155,10 @@ public class Assets {
 		// player sprites
 
 		// TODO: Remove this test!!
-		playerSprites = playerSpriteAtlas.findRegions("player");
-		diverSprites = spriteAtlas.findRegions("diver");
+		playerRunTextures = playerSpriteAtlas.findRegions("player_run");
+		playerIdleTextures = playerSpriteAtlas.findRegions("player_idle");
+		playerjumpingTextures = playerSpriteAtlas.findRegions("player_jump");
+		diverTextures = spriteAtlas.findRegions("diver");
 		
 		jetpackEffect = assetManager.get("effects/test.p");
 	}
